@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,8 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.counterapp.ui.theme.CounterAppTheme
+import com.example.counterapp.ui.theme.CounterViewModel
 
 class MainActivity : ComponentActivity() {
+
+    val counterViewModel by viewModels<CounterViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -31,7 +36,7 @@ class MainActivity : ComponentActivity() {
             CounterAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Counter(
-                        name = "Android",
+                        counterViewModel,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -41,9 +46,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Counter(name: String, modifier: Modifier = Modifier) {
-
-    var countValue by rememberSaveable { mutableIntStateOf(0) }
+fun Counter(counterViewModel: CounterViewModel, modifier: Modifier = Modifier) {
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -51,18 +54,18 @@ fun Counter(name: String, modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center
     ) {
         Button( {
-            countValue++
+            counterViewModel.counterValue.intValue++
         }) { Text("Up") }
 
         Text(
-            text = countValue.toString(),
+            text = counterViewModel.counterValue.intValue.toString(),
             modifier = modifier,
             fontSize = 48.sp
         )
 
         Button( {
-            if (countValue > 0)
-                countValue--
+            if (counterViewModel.counterValue.intValue > 0)
+                counterViewModel.counterValue.intValue--
         }) { Text("Down") }
     }
 }
